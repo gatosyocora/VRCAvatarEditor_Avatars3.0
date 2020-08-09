@@ -108,7 +108,8 @@ namespace VRCAvatarEditor.Avatars3
                 string[] stateNames;
 
                 var stateMachine = editAvatar.fxController.layers[editAvatar.targetFxLayerIndex].stateMachine;
-                stateNames = stateMachine.states.Select(s => s.state.name).OrderBy(n => n).Select((n, i) => $"{i+1}:{n}").ToArray();
+                var states = stateMachine.states.OrderBy(s => s.state.name).ToArray();
+                stateNames = states.Select((s, i) => $"{i + 1}:{s.state.name}").ToArray();
 
                 EditorGUILayout.LabelField("Layer", editAvatar.fxController.layers[editAvatar.targetFxLayerIndex].name);
 
@@ -132,27 +133,24 @@ namespace VRCAvatarEditor.Avatars3
 
                 GUILayout.Space(20);
 
-                using (new EditorGUI.DisabledGroupScope(
-                            selectedHandAnim == HandPose.HandPoseType.NoSelection ||
-                            handPoseAnim == null))
+                using (new EditorGUI.DisabledGroupScope(false))
                 {
                     if (GUILayout.Button(LocalizeText.instance.langPair.createAnimFileButtonText))
                     {
-                        // TODO: 表情Animationの作成
-                        //var animController = originalAvatar.fxController;
+                        var controller = originalAvatar.fxController;
 
-                        //var createdAnimClip = FaceEmotion.CreateBlendShapeAnimationClip(animName, originalAvatar.animSavedFolderPath, ref editAvatar, ref blendshapeExclusions, editAvatar.descriptor.gameObject);
+                        var createdAnimClip = FaceEmotion.CreateBlendShapeAnimationClip(animName, originalAvatar.animSavedFolderPath, ref editAvatar, ref blendshapeExclusions, editAvatar.descriptor.gameObject);
                         //if (selectedHandAnim != HandPose.HandPoseType.NoSelection)
                         //{
-                        //    HandPose.AddHandPoseAnimationKeysFromOriginClip(createdAnimClip, handPoseAnim);
-                        //    animController[AnimationsGUI.HANDANIMS[(int)selectedHandAnim - 1]] = createdAnimClip;
-                        //    EditorUtility.SetDirty(animController);
+                        //HandPose.AddHandPoseAnimationKeysFromOriginClip(createdAnimClip, handPoseAnim);
+                        states[selectedStateIndex].state.motion = createdAnimClip;
+                        EditorUtility.SetDirty(controller);
 
-                        //    FaceEmotion.ResetToDefaultFaceEmotion(ref editAvatar);
+                        FaceEmotion.ResetToDefaultFaceEmotion(ref editAvatar);
                         //}
 
-                        //originalAvatar.fxController = animController;
-                        //editAvatar.fxController = animController;
+                        originalAvatar.fxController = controller;
+                        editAvatar.fxController = controller;
 
                         //animationsGUI.ResetPathMissing(AnimationsGUI.HANDANIMS[(int)selectedHandAnim - 1]);
                     }
