@@ -125,7 +125,7 @@ namespace VRCAvatarEditor.Avatars3
                                 GUILayout.Width(200)
                             ) as AnimationClip;
 
-                            using (new EditorGUI.DisabledGroupScope(anim == null))
+                            using (new EditorGUI.DisabledGroupScope(anim == null || anim.name.StartsWith("proxy_")))
                             {
                                 if (GUILayout.Button(LocalizeText.instance.langPair.edit, GUILayout.Width(50)))
                                 {
