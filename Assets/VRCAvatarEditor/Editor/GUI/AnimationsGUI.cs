@@ -102,6 +102,11 @@ namespace VRCAvatarEditor.Avatars3
                     var stateMachine = controller.layers[layerIndex].stateMachine;
                     pathMissing = new bool[stateMachine.states.Length];
 
+                    if (!stateMachine.states.Any())
+                    {
+                        EditorGUILayout.HelpBox("Have No AnimationClip", MessageType.Info);
+                    }
+
                     AnimationClip anim;
                     for (int i = 0; i < stateMachine.states.Length; i++)
                     {
