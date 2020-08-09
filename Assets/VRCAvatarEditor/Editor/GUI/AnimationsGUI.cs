@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
 using Avatar = VRCAvatarEditor.Avatars3.Avatar;
 
@@ -25,7 +26,7 @@ namespace VRCAvatarEditor.Avatars3
         private bool failedAutoFixMissingPath = false;
 
         string titleText;
-        AnimatorOverrideController controller;
+        AnimatorController controller;
         private bool showEmoteAnimations = false;
 
         private Tab _tab = Tab.Standing;
@@ -52,9 +53,10 @@ namespace VRCAvatarEditor.Avatars3
 
             errorStyle.normal.textColor = Color.red;
 
-            if (editAvatar != null && editAvatar.standingAnimController != null)
+            if (editAvatar != null && editAvatar.fxController != null)
             {
-                ValidateAnimatorOverrideController(editAvatar.animator, editAvatar.standingAnimController);
+                // TODO: AnimationClipのバリエーション機能
+                //ValidateAnimatorOverrideController(editAvatar.animator, editAvatar.fxController);
             }
         }
 
@@ -63,115 +65,101 @@ namespace VRCAvatarEditor.Avatars3
             // 設定済みアニメーション一覧
             using (new EditorGUILayout.VerticalScope(GUI.skin.box, layoutOptions))
             {
-                using (new EditorGUILayout.HorizontalScope())
-                {
-                    GUILayout.FlexibleSpace();
-                    // タブを描画する
-                    _tab = (Tab)GUILayout.Toolbar((int)_tab, LocalizeText.instance.animationTabTexts, "LargeButton", GUI.ToolbarButtonSize.Fixed);
-                    GUILayout.FlexibleSpace();
-                }
-                if (_tab == Tab.Standing)
-                {
-                    titleText = LocalizeText.instance.langPair.standingTabText;
-                    if (originalAvatar != null)
-                        controller = originalAvatar.standingAnimController;
-                }
-                else
-                {
-                    titleText = LocalizeText.instance.langPair.sittingTabText;
-                    if (originalAvatar != null)
-                        controller = originalAvatar.sittingAnimController;
-                }
+                if (originalAvatar != null)
+                    controller = originalAvatar.fxController;
 
                 using (new EditorGUILayout.HorizontalScope())
                 {
-                    EditorGUILayout.LabelField(titleText, EditorStyles.boldLabel);
+                    EditorGUILayout.LabelField("FX Layer", EditorStyles.boldLabel);
 
-                    string btnText;
-                    if (!showEmoteAnimations)
-                    {
-                        btnText = LocalizeText.instance.langPair.emoteButtonText;
-                    }
-                    else
-                    {
-                        btnText = LocalizeText.instance.langPair.faceAndHandButtonText;
-                    }
+                    // TODO: Emote一覧
+                    //string btnText;
+                    //if (!showEmoteAnimations)
+                    //{
+                    //    btnText = LocalizeText.instance.langPair.emoteButtonText;
+                    //}
+                    //else
+                    //{
+                    //    btnText = LocalizeText.instance.langPair.faceAndHandButtonText;
+                    //}
 
-                    if (GUILayout.Button(btnText))
-                    {
-                        showEmoteAnimations = !showEmoteAnimations;
-                    }
+                    //if (GUILayout.Button(btnText))
+                    //{
+                    //    showEmoteAnimations = !showEmoteAnimations;
+                    //}
                 }
 
                 EditorGUILayout.Space();
 
                 if (controller != null)
                 {
-                    if (!showEmoteAnimations)
-                    {
+                    //if (!showEmoteAnimations)
+                    //{
                         AnimationClip anim;
-                        for (int i = 0; i < HANDANIMS.Length; i++)
-                        {
-                            var handPoseName = HANDANIMS[i];
-                            if (handPoseName == controller[handPoseName].name)
-                                anim = null;
-                            else
-                                anim = controller[handPoseName];
+                    //TODO: Animation一覧
+                        //for (int i = 0; i < HANDANIMS.Length; i++)
+                        //{
+                        //    var handPoseName = HANDANIMS[i];
+                        //    if (handPoseName == controller[handPoseName].name)
+                        //        anim = null;
+                        //    else
+                        //        anim = controller[handPoseName];
 
-                            using (new EditorGUILayout.HorizontalScope(GUILayout.Width(350)))
-                            {
-                                GUILayout.Label((i + 1) + ":" + handPoseName, (pathMissing[i]) ? errorStyle : normalStyle, GUILayout.Width(100));
+                        //    using (new EditorGUILayout.HorizontalScope(GUILayout.Width(350)))
+                        //    {
+                        //        GUILayout.Label((i + 1) + ":" + handPoseName, (pathMissing[i]) ? errorStyle : normalStyle, GUILayout.Width(100));
 
-                                controller[handPoseName] = EditorGUILayout.ObjectField(
-                                    string.Empty,
-                                    anim,
-                                    typeof(AnimationClip),
-                                    true,
-                                    GUILayout.Width(200)
-                                ) as AnimationClip;
+                        //        controller[handPoseName] = EditorGUILayout.ObjectField(
+                        //            string.Empty,
+                        //            anim,
+                        //            typeof(AnimationClip),
+                        //            true,
+                        //            GUILayout.Width(200)
+                        //        ) as AnimationClip;
 
-                                using (new EditorGUI.DisabledGroupScope(anim == null))
-                                {
-                                    if (GUILayout.Button(LocalizeText.instance.langPair.edit, GUILayout.Width(50)))
-                                    {
-                                        if (vrcAvatarEditorGUI.currentTool != VRCAvatarEditorGUI.ToolFunc.FaceEmotion)
-                                        {
-                                            vrcAvatarEditorGUI.currentTool = VRCAvatarEditorGUI.ToolFunc.FaceEmotion;
-                                            vrcAvatarEditorGUI.TabChanged();
-                                        }
-                                        FaceEmotion.ApplyAnimationProperties(controller[handPoseName], ref editAvatar);
-                                        faceEmotionGUI.ChangeSaveAnimationState(controller[handPoseName].name,
-                                            (HandPose.HandPoseType)Enum.ToObject(typeof(HandPose.HandPoseType), i + 1),
-                                            controller[handPoseName]);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        AnimationClip anim;
-                        foreach (var emoteAnim in EMOTEANIMS)
-                        {
-                            if (emoteAnim == controller[emoteAnim].name)
-                                anim = null;
-                            else
-                                anim = controller[emoteAnim];
+                        //        using (new EditorGUI.DisabledGroupScope(anim == null))
+                        //        {
+                        //            if (GUILayout.Button(LocalizeText.instance.langPair.edit, GUILayout.Width(50)))
+                        //            {
+                        //                if (vrcAvatarEditorGUI.currentTool != VRCAvatarEditorGUI.ToolFunc.FaceEmotion)
+                        //                {
+                        //                    vrcAvatarEditorGUI.currentTool = VRCAvatarEditorGUI.ToolFunc.FaceEmotion;
+                        //                    vrcAvatarEditorGUI.TabChanged();
+                        //                }
+                        //                FaceEmotion.ApplyAnimationProperties(controller[handPoseName], ref editAvatar);
+                        //                faceEmotionGUI.ChangeSaveAnimationState(controller[handPoseName].name,
+                        //                    (HandPose.HandPoseType)Enum.ToObject(typeof(HandPose.HandPoseType), i + 1),
+                        //                    controller[handPoseName]);
+                        //            }
+                        //        }
+                        //    }
+                        //}
+                    //}
+                    // TODO: Emote一覧
+                    //else
+                    //{
+                    //    AnimationClip anim;
+                    //    foreach (var emoteAnim in EMOTEANIMS)
+                    //    {
+                    //        if (emoteAnim == controller[emoteAnim].name)
+                    //            anim = null;
+                    //        else
+                    //            anim = controller[emoteAnim];
 
-                            using (new EditorGUILayout.HorizontalScope(GUILayout.Width(350)))
-                            {
-                                GUILayout.Label(emoteAnim, GUILayout.Width(90));
+                    //        using (new EditorGUILayout.HorizontalScope(GUILayout.Width(350)))
+                    //        {
+                    //            GUILayout.Label(emoteAnim, GUILayout.Width(90));
 
-                                controller[emoteAnim] = EditorGUILayout.ObjectField(
-                                    string.Empty,
-                                    anim,
-                                    typeof(AnimationClip),
-                                    true,
-                                    GUILayout.Width(250)
-                                ) as AnimationClip;
-                            }
-                        }
-                    }
+                    //            controller[emoteAnim] = EditorGUILayout.ObjectField(
+                    //                string.Empty,
+                    //                anim,
+                    //                typeof(AnimationClip),
+                    //                true,
+                    //                GUILayout.Width(250)
+                    //            ) as AnimationClip;
+                    //        }
+                    //    }
+                    //}
                 }
                 else
                 {
@@ -225,7 +213,7 @@ namespace VRCAvatarEditor.Avatars3
 
                         if (_tab == Tab.Sitting)
                         {
-                            using (new EditorGUI.DisabledGroupScope(editAvatar.standingAnimController == null))
+                            using (new EditorGUI.DisabledGroupScope(editAvatar.fxController == null))
                             {
                                 if (GUILayout.Button(LocalizeText.instance.langPair.setToSameAsCustomStandingAnimsButtonText))
                                 {
@@ -245,22 +233,23 @@ namespace VRCAvatarEditor.Avatars3
                 {
                     var warningMessage = (failedAutoFixMissingPath) ? LocalizeText.instance.langPair.failAutoFixMissingPathMessageText : LocalizeText.instance.langPair.existMissingPathMessageText;
                     EditorGUILayout.HelpBox(warningMessage, MessageType.Warning);
-                    using (new EditorGUI.DisabledGroupScope(failedAutoFixMissingPath))
-                    {
-                        if (GUILayout.Button(LocalizeText.instance.langPair.autoFix))
-                        {
-                            failedAutoFixMissingPath = false;
-                            for (int i = 0; i < pathMissing.Length; i++)
-                            {
-                                if (!pathMissing[i]) continue;
-                                var result = GatoUtility.TryFixMissingPathInAnimationClip(
-                                                    editAvatar.animator,
-                                                    editAvatar.standingAnimController[HANDANIMS[i]]);
-                                pathMissing[i] = !result;
-                                failedAutoFixMissingPath = !result;
-                            }
-                        }
-                    }
+                    // TODO: Missingの自動修正
+                    //using (new EditorGUI.DisabledGroupScope(failedAutoFixMissingPath))
+                    //{
+                    //    if (GUILayout.Button(LocalizeText.instance.langPair.autoFix))
+                    //    {
+                    //        failedAutoFixMissingPath = false;
+                    //        for (int i = 0; i < pathMissing.Length; i++)
+                    //        {
+                    //            if (!pathMissing[i]) continue;
+                    //            var result = GatoUtility.TryFixMissingPathInAnimationClip(
+                    //                                editAvatar.animator,
+                    //                                editAvatar.fxController[HANDANIMS[i]]);
+                    //            pathMissing[i] = !result;
+                    //            failedAutoFixMissingPath = !result;
+                    //        }
+                    //    }
+                    //}
                 }
             }
             return false;

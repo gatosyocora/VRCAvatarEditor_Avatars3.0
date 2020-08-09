@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
 using VRC.SDK3.Avatars.Components;
 using Avatar = VRCAvatarEditor.Avatars3.Avatar;
@@ -49,25 +50,17 @@ namespace VRCAvatarEditor.Avatars3
                     // AnimatorOverrideController
                     using (var check = new EditorGUI.ChangeCheckScope())
                     {
-                        avatar.standingAnimController = EditorGUILayout.ObjectField(
-                            LocalizeText.instance.langPair.customStandingAnimsLabel,
-                            avatar.standingAnimController,
-                            typeof(AnimatorOverrideController),
+                        avatar.fxController = EditorGUILayout.ObjectField(
+                            "FX Layer",
+                            avatar.fxController,
+                            typeof(AnimatorController),
                             true
-                        ) as AnimatorOverrideController;
-                        avatar.sittingAnimController = EditorGUILayout.ObjectField(
-                            LocalizeText.instance.langPair.customSittingAnimsLabel,
-                            avatar.sittingAnimController,
-                            typeof(AnimatorOverrideController),
-                            true
-                        ) as AnimatorOverrideController;
+                        ) as AnimatorController;
 
                         if (check.changed)
                         {
-                            // TODO: Avatars3.0に対応させる
-                            //avatar.descriptor.CustomStandingAnims = avatar.standingAnimController;
-                            //avatar.descriptor.CustomSittingAnims = avatar.sittingAnimController;
-                            //EditorUtility.SetDirty(avatar.descriptor);
+                            avatar.descriptor.baseAnimationLayers[4].animatorController = avatar.fxController;
+                            EditorUtility.SetDirty(avatar.descriptor);
 
                             avatar.SetAnimSavedFolderPath();
                         }

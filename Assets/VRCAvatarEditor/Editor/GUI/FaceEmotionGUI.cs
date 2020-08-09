@@ -129,22 +129,23 @@ namespace VRCAvatarEditor.Avatars3
                 {
                     if (GUILayout.Button(LocalizeText.instance.langPair.createAnimFileButtonText))
                     {
-                        var animController = originalAvatar.standingAnimController;
+                        // TODO: 表情Animationの作成
+                        //var animController = originalAvatar.fxController;
 
-                        var createdAnimClip = FaceEmotion.CreateBlendShapeAnimationClip(animName, originalAvatar.animSavedFolderPath, ref editAvatar, ref blendshapeExclusions, editAvatar.descriptor.gameObject);
-                        if (selectedHandAnim != HandPose.HandPoseType.NoSelection)
-                        {
-                            HandPose.AddHandPoseAnimationKeysFromOriginClip(createdAnimClip, handPoseAnim);
-                            animController[AnimationsGUI.HANDANIMS[(int)selectedHandAnim - 1]] = createdAnimClip;
-                            EditorUtility.SetDirty(animController);
+                        //var createdAnimClip = FaceEmotion.CreateBlendShapeAnimationClip(animName, originalAvatar.animSavedFolderPath, ref editAvatar, ref blendshapeExclusions, editAvatar.descriptor.gameObject);
+                        //if (selectedHandAnim != HandPose.HandPoseType.NoSelection)
+                        //{
+                        //    HandPose.AddHandPoseAnimationKeysFromOriginClip(createdAnimClip, handPoseAnim);
+                        //    animController[AnimationsGUI.HANDANIMS[(int)selectedHandAnim - 1]] = createdAnimClip;
+                        //    EditorUtility.SetDirty(animController);
 
-                            FaceEmotion.ResetToDefaultFaceEmotion(ref editAvatar);
-                        }
+                        //    FaceEmotion.ResetToDefaultFaceEmotion(ref editAvatar);
+                        //}
 
-                        originalAvatar.standingAnimController = animController;
-                        editAvatar.standingAnimController = animController;
+                        //originalAvatar.fxController = animController;
+                        //editAvatar.fxController = animController;
 
-                        animationsGUI.ResetPathMissing(AnimationsGUI.HANDANIMS[(int)selectedHandAnim - 1]);
+                        //animationsGUI.ResetPathMissing(AnimationsGUI.HANDANIMS[(int)selectedHandAnim - 1]);
                     }
                 }
 
@@ -286,18 +287,19 @@ namespace VRCAvatarEditor.Avatars3
         {
             if (usePreviousAnimationOnHandAnimation)
             {
-                var animController = originalAvatar.standingAnimController;
-                var previousAnimation = animController[AnimationsGUI.HANDANIMS[(int)selectedHandAnim - 1]];
+                var animController = originalAvatar.fxController;
+                // TODO: 以前のアニメーションの取得
+                //var previousAnimation = animController[AnimationsGUI.HANDANIMS[(int)selectedHandAnim - 1]];
 
                 // 未設定でなければ以前設定されていたものをHandPoseAnimationとして使う
-                if (previousAnimation != null && previousAnimation.name != AnimationsGUI.HANDANIMS[(int)selectedHandAnim - 1])
-                {
-                    handPoseAnim = previousAnimation;
-                }
-                else
-                {
-                    handPoseAnim = HandPose.GetHandAnimationClip(selectedHandAnim);
-                }
+                //if (previousAnimation != null && previousAnimation.name != AnimationsGUI.HANDANIMS[(int)selectedHandAnim - 1])
+                //{
+                //    handPoseAnim = previousAnimation;
+                //}
+                //else
+                //{
+                //    handPoseAnim = HandPose.GetHandAnimationClip(selectedHandAnim);
+                //}
             }
             else
             {

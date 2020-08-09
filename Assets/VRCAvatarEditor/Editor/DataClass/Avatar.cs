@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
 using VRC.Core;
 using VRC.SDK3.Avatars.Components;
@@ -13,8 +14,7 @@ namespace VRCAvatarEditor.Avatars3
         public Animator animator { get; set; }
         public VRCAvatarDescriptor descriptor { get; set; }
         public Vector3 eyePos { get; set; }
-        public AnimatorOverrideController standingAnimController { get; set; }
-        public AnimatorOverrideController sittingAnimController { get; set; }
+        public AnimatorController fxController { get; set; }
         public VRCAvatarDescriptor.AnimationSet sex { get; set; }
         public string avatarId { get; set; }
         public int overridesNum { get; set; }
@@ -39,8 +39,7 @@ namespace VRCAvatarEditor.Avatars3
             animator = null;
             descriptor = null;
             eyePos = Vector3.zero;
-            standingAnimController = null;
-            sittingAnimController = null;
+            fxController = null;
             sex = VRCAvatarDescriptor.AnimationSet.None;
             avatarId = string.Empty;
             overridesNum = 0;
@@ -153,9 +152,9 @@ namespace VRCAvatarEditor.Avatars3
 
         public void SetAnimSavedFolderPath()
         {
-            if (standingAnimController != null)
+            if (fxController != null)
             {
-                var assetPath = AssetDatabase.GetAssetPath(standingAnimController);
+                var assetPath = AssetDatabase.GetAssetPath(fxController);
                 animSavedFolderPath = $"{Path.GetDirectoryName(assetPath)}{Path.DirectorySeparatorChar}";
             }
         }
