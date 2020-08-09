@@ -99,25 +99,25 @@ namespace VRCAvatarEditor.Avatars3
                     //{
                     var layerNames = controller.layers.Select(l => l.name).ToArray();
                     editAvatar.targetFxLayerIndex = EditorGUILayout.Popup("Layer", editAvatar.targetFxLayerIndex, layerNames);
-                    var stateMachine = controller.layers[editAvatar.targetFxLayerIndex].stateMachine;
-                    pathMissing = new bool[stateMachine.states.Length];
+                    var states = controller.layers[editAvatar.targetFxLayerIndex].stateMachine.states.OrderBy(s => s.state.name).ToArray();
+                    pathMissing = new bool[states.Length];
 
-                    if (!stateMachine.states.Any())
+                    if (!states.Any())
                     {
                         EditorGUILayout.HelpBox("Have No AnimationClip", MessageType.Info);
                     }
 
                     AnimationClip anim;
-                    for (int i = 0; i < stateMachine.states.Length; i++)
+                    for (int i = 0; i < states.Length; i++)
                     {
-                        var stateName = stateMachine.states[i].state.name;
-                        anim = stateMachine.states[i].state.motion as AnimationClip;
+                        var stateName = states[i].state.name;
+                        anim = states[i].state.motion as AnimationClip;
 
                         using (new EditorGUILayout.HorizontalScope(GUILayout.Width(350)))
                         {
                             GUILayout.Label((i + 1) + ":" + stateName, (pathMissing[i]) ? errorStyle : normalStyle, GUILayout.Width(100));
 
-                            stateMachine.states[i].state.motion = EditorGUILayout.ObjectField(
+                            states[i].state.motion = EditorGUILayout.ObjectField(
                                 string.Empty,
                                 anim,
                                 typeof(AnimationClip),

@@ -108,7 +108,7 @@ namespace VRCAvatarEditor.Avatars3
                 string[] stateNames;
 
                 var stateMachine = editAvatar.fxController.layers[editAvatar.targetFxLayerIndex].stateMachine;
-                stateNames = stateMachine.states.Select((s, i) => $"{i+1}:{s.state.name}").ToArray();
+                stateNames = stateMachine.states.Select(s => s.state.name).OrderBy(n => n).Select((n, i) => $"{i+1}:{n}").ToArray();
 
                 using (var check = new EditorGUI.ChangeCheckScope())
                 {
