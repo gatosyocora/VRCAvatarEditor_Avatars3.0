@@ -8,7 +8,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace VRCAvatarEditor
+namespace VRCAvatarEditor.Avatars3
 {
     public class LocalizeText : ScriptableSingleton<LocalizeText>
     {

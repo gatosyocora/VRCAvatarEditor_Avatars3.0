@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
 
-namespace VRCAvatarEditor
+namespace VRCAvatarEditor.Avatars3
 {
     public class SendData : ScriptableSingleton<SendData>
     {

@@ -3,7 +3,7 @@ using UnityEngine;
 
 // Copyright (c) 2019 gatosyocora
 
-namespace VRCAvatarEditor
+namespace VRCAvatarEditor.Avatars3
 {
     //[CreateAssetMenu(menuName ="VRCAvatarEditor/Setting Data")]
     public class SettingData : ScriptableObject

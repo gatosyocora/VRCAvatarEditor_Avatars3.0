@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace VRCAvatarEditor
+namespace VRCAvatarEditor.Avatars3
 {
     public class AnimationLoaderGUI : EditorWindow
     {

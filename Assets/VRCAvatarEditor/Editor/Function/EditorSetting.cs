@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using VRCAvatarEditor;
 
-namespace VRCAvatarEditor
+namespace VRCAvatarEditor.Avatars3
 {
     public class EditorSetting : ScriptableSingleton<EditorSetting>
     {

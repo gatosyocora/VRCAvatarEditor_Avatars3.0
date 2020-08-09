@@ -4,13 +4,14 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using Avatar = VRCAvatarEditor.Avatars3.Avatar;
 
-namespace VRCAvatarEditor
+namespace VRCAvatarEditor.Avatars3
 {
     public class FaceEmotionGUI : Editor, IVRCAvatarEditorGUI
     {
-        private VRCAvatarEditor.Avatar editAvatar;
-        private VRCAvatarEditor.Avatar originalAvatar;
+        private Avatar editAvatar;
+        private Avatar originalAvatar;
         private VRCAvatarEditorGUI parentWindow;
         private AnimationsGUI animationsGUI;
 
@@ -36,7 +37,7 @@ namespace VRCAvatarEditor
 
         private bool usePreviousAnimationOnHandAnimation;
 
-        public void Initialize(ref VRCAvatarEditor.Avatar editAvatar, VRCAvatarEditor.Avatar originalAvatar, string saveFolderPath, EditorWindow window, AnimationsGUI animationsGUI)
+        public void Initialize(ref Avatar editAvatar, Avatar originalAvatar, string saveFolderPath, EditorWindow window, AnimationsGUI animationsGUI)
         {
             this.editAvatar = editAvatar;
             this.originalAvatar = originalAvatar;

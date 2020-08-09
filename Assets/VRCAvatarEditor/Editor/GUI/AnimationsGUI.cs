@@ -3,13 +3,14 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using Avatar = VRCAvatarEditor.Avatars3.Avatar;
 
-namespace VRCAvatarEditor
+namespace VRCAvatarEditor.Avatars3
 {
     public class AnimationsGUI : Editor, IVRCAvatarEditorGUI
     {
-        private VRCAvatarEditor.Avatar editAvatar;
-        private VRCAvatarEditor.Avatar originalAvatar;
+        private Avatar editAvatar;
+        private Avatar originalAvatar;
         private VRCAvatarEditorGUI vrcAvatarEditorGUI;
         private FaceEmotionGUI faceEmotionGUI;
 
@@ -37,8 +38,8 @@ namespace VRCAvatarEditor
 
         private string saveFolderPath;
 
-        public void Initialize(ref VRCAvatarEditor.Avatar editAvatar,
-                               VRCAvatarEditor.Avatar originalAvatar,
+        public void Initialize(ref Avatar editAvatar,
+                               Avatar originalAvatar,
                                string saveFolderPath,
                                VRCAvatarEditorGUI vrcAvatarEditorGUI,
                                FaceEmotionGUI faceEmotionGUI)
@@ -207,13 +208,15 @@ namespace VRCAvatarEditor
 
                             if (_tab == Tab.Standing)
                             {
-                                originalAvatar.descriptor.CustomStandingAnims = createdCustomOverrideController;
-                                editAvatar.descriptor.CustomStandingAnims = createdCustomOverrideController;
+                                // TODO: Avatars3.0へ対応させる
+                                //originalAvatar.descriptor.CustomStandingAnims = createdCustomOverrideController;
+                                //editAvatar.descriptor.CustomStandingAnims = createdCustomOverrideController;
                             }
                             else
                             {
-                                originalAvatar.descriptor.CustomSittingAnims = createdCustomOverrideController;
-                                editAvatar.descriptor.CustomSittingAnims = createdCustomOverrideController;
+                                // TODO: Avatars3.0へ対応させる
+                                //originalAvatar.descriptor.CustomSittingAnims = createdCustomOverrideController;
+                                //editAvatar.descriptor.CustomSittingAnims = createdCustomOverrideController;
                             }
 
                             originalAvatar.LoadAvatarInfo();
@@ -226,9 +229,10 @@ namespace VRCAvatarEditor
                             {
                                 if (GUILayout.Button(LocalizeText.instance.langPair.setToSameAsCustomStandingAnimsButtonText))
                                 {
-                                    var customStandingAnimsController = originalAvatar.descriptor.CustomStandingAnims;
-                                    originalAvatar.descriptor.CustomSittingAnims = customStandingAnimsController;
-                                    editAvatar.descriptor.CustomSittingAnims = customStandingAnimsController;
+                                    // TODO: Avatars3.0へ対応させる
+                                    //var customStandingAnimsController = originalAvatar.descriptor.CustomStandingAnims;
+                                    //originalAvatar.descriptor.CustomSittingAnims = customStandingAnimsController;
+                                    //editAvatar.descriptor.CustomSittingAnims = customStandingAnimsController;
                                     originalAvatar.LoadAvatarInfo();
                                     editAvatar.LoadAvatarInfo();
                                 }

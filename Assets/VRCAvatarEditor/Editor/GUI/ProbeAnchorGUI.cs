@@ -1,11 +1,12 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using Avatar = VRCAvatarEditor.Avatars3.Avatar;
 
-namespace VRCAvatarEditor
+namespace VRCAvatarEditor.Avatars3
 {
     public class ProbeAnchorGUI : Editor, IVRCAvatarEditorGUI
     {
-        private VRCAvatarEditor.Avatar avatar;
+        private Avatar avatar;
 
         private ProbeAnchor.TARGETPOS targetPos = ProbeAnchor.TARGETPOS.HEAD;
 
@@ -19,7 +20,7 @@ namespace VRCAvatarEditor
 
         private Vector2 leftScrollPos = Vector2.zero;
 
-        public void Initialize(ref VRCAvatarEditor.Avatar avatar)
+        public void Initialize(ref Avatar avatar)
         {
             this.avatar = avatar;
             SettingForProbeSetter();

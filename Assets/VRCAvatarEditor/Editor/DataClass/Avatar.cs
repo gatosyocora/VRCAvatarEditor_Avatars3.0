@@ -4,18 +4,18 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 using VRC.Core;
-using VRCSDK2;
+using VRC.SDK3.Avatars.Components;
 
-namespace VRCAvatarEditor
+namespace VRCAvatarEditor.Avatars3
 {
     public class Avatar
     {
         public Animator animator { get; set; }
-        public VRC_AvatarDescriptor descriptor { get; set; }
+        public VRCAvatarDescriptor descriptor { get; set; }
         public Vector3 eyePos { get; set; }
         public AnimatorOverrideController standingAnimController { get; set; }
         public AnimatorOverrideController sittingAnimController { get; set; }
-        public VRC_AvatarDescriptor.AnimationSet sex { get; set; }
+        public VRCAvatarDescriptor.AnimationSet sex { get; set; }
         public string avatarId { get; set; }
         public int overridesNum { get; set; }
         public SkinnedMeshRenderer faceMesh { get; set; }
@@ -23,7 +23,7 @@ namespace VRCAvatarEditor
         public Material[] materials { get; set; }
         public int triangleCount { get; set; }
         public int triangleCountInactive { get; set; }
-        public VRC_AvatarDescriptor.LipSyncStyle lipSyncStyle { get; set; }
+        public VRC.SDKBase.VRC_AvatarDescriptor.LipSyncStyle lipSyncStyle { get; set; }
         public Enum faceShapeKeyEnum { get; set; }
         public List<SkinnedMesh> skinnedMeshList { get; set; }
 
@@ -41,25 +41,25 @@ namespace VRCAvatarEditor
             eyePos = Vector3.zero;
             standingAnimController = null;
             sittingAnimController = null;
-            sex = VRC_AvatarDescriptor.AnimationSet.None;
+            sex = VRCAvatarDescriptor.AnimationSet.None;
             avatarId = string.Empty;
             overridesNum = 0;
             faceMesh = null;
             lipSyncShapeKeyNames = null;
             triangleCount = 0;
             triangleCountInactive = 0;
-            lipSyncStyle = VRC_AvatarDescriptor.LipSyncStyle.Default;
+            lipSyncStyle = VRCAvatarDescriptor.LipSyncStyle.Default;
             faceShapeKeyEnum = null;
             skinnedMeshList = null;
             animSavedFolderPath = $"Assets{Path.DirectorySeparatorChar}";
         }
 
-        public Avatar(VRC_AvatarDescriptor descriptor) : this()
+        public Avatar(VRCAvatarDescriptor descriptor) : this()
         {
             LoadAvatarInfo(descriptor);
         }
 
-        public void LoadAvatarInfo(VRC_AvatarDescriptor descriptor)
+        public void LoadAvatarInfo(VRCAvatarDescriptor descriptor)
         {
             this.descriptor = descriptor;
             LoadAvatarInfo();
@@ -79,8 +79,9 @@ namespace VRCAvatarEditor
             eyePos = descriptor.ViewPosition;
             sex = descriptor.Animations;
 
-            standingAnimController = descriptor.CustomStandingAnims;
-            sittingAnimController = descriptor.CustomSittingAnims;
+            // TODO: Avatars3.0に対応させる
+            //standingAnimController = descriptor.CustomStandingAnims;
+            //sittingAnimController = descriptor.CustomSittingAnims;
 
             SetAnimSavedFolderPath();
 
@@ -88,7 +89,7 @@ namespace VRCAvatarEditor
 
             faceMesh = descriptor.VisemeSkinnedMesh;
 
-            if (faceMesh != null && descriptor.lipSync == VRC_AvatarDescriptor.LipSyncStyle.VisemeBlendShape)
+            if (faceMesh != null && descriptor.lipSync == VRCAvatarDescriptor.LipSyncStyle.VisemeBlendShape)
             {
                 lipSyncShapeKeyNames = new List<string>();
                 lipSyncShapeKeyNames.AddRange(descriptor.VisemeBlendShapes);
@@ -117,8 +118,8 @@ namespace VRCAvatarEditor
         {
             if (descriptor == null) return;
 
-            lipSyncStyle = VRC_AvatarDescriptor.LipSyncStyle.VisemeBlendShape;
-            descriptor.lipSync = VRC_AvatarDescriptor.LipSyncStyle.VisemeBlendShape;
+            lipSyncStyle = VRCAvatarDescriptor.LipSyncStyle.VisemeBlendShape;
+            descriptor.lipSync = VRCAvatarDescriptor.LipSyncStyle.VisemeBlendShape;
 
             if (faceMesh == null)
             {
@@ -130,7 +131,7 @@ namespace VRCAvatarEditor
             if (faceMesh == null) return;
             var mesh = faceMesh.sharedMesh;
 
-            var visemeBlendShapeNames = Enum.GetNames(typeof(VRC_AvatarDescriptor.Viseme));
+            var visemeBlendShapeNames = Enum.GetNames(typeof(VRCAvatarDescriptor.Viseme));
 
             for (int visemeIndex = 0; visemeIndex < visemeBlendShapeNames.Length; visemeIndex++)
             {

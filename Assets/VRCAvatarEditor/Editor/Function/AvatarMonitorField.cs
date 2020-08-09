@@ -3,9 +3,10 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using VRCSDK2;
+using VRC.SDK3.Avatars.Components;
+using Avatar = VRCAvatarEditor.Avatars3.Avatar;
 
-namespace VRCAvatarEditor
+namespace VRCAvatarEditor.Avatars3
 {
     public class AvatarMonitorField : IDisposable
     {
@@ -18,8 +19,8 @@ namespace VRCAvatarEditor
         private int monitorSize;
         private Material textureMat;
 
-        private VRC_AvatarDescriptor descriptor;
-        public VRCAvatarEditor.Avatar avatar { get; private set; }
+        private VRCAvatarDescriptor descriptor;
+        public Avatar avatar { get; private set; }
         private SkinnedMeshRenderer faceMesh;
 
         private Rect rect;
@@ -60,7 +61,7 @@ namespace VRCAvatarEditor
         }
 
 
-        public void Initinalize(VRCAvatarEditor.Avatar avatar)
+        public void Initinalize(Avatar avatar)
         {
 
         }
@@ -105,7 +106,7 @@ namespace VRCAvatarEditor
             SceneManager.MoveGameObjectToScene(obj, scene);
         }
 
-        public VRCAvatarEditor.Avatar AddAvatar(VRC_AvatarDescriptor descriptor)
+        public Avatar AddAvatar(VRCAvatarDescriptor descriptor)
         {
             if (avatarObj != null)
                 UnityEngine.Object.DestroyImmediate(avatarObj);
@@ -117,8 +118,8 @@ namespace VRCAvatarEditor
             AddGameObject(newAvatarObj);
             this.avatarObj = newAvatarObj;
             newAvatarObj.transform.position = new Vector3(0, 0, 0);
-            this.descriptor = newAvatarObj.GetComponent<VRC_AvatarDescriptor>();
-            avatar = new VRCAvatarEditor.Avatar(this.descriptor);
+            this.descriptor = newAvatarObj.GetComponent<VRCAvatarDescriptor>();
+            avatar = new Avatar(this.descriptor);
             ResetCameraTransform();
 
             return avatar;

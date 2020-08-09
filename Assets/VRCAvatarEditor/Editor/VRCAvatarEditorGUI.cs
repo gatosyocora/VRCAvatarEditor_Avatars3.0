@@ -8,11 +8,12 @@ using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
-using VRCSDK2;
+using VRC.SDK3.Avatars.Components;
+using Avatar = VRCAvatarEditor.Avatars3.Avatar;
 
 // Copyright (c) 2019 gatosyocora
 
-namespace VRCAvatarEditor
+namespace VRCAvatarEditor.Avatars3
 {
     public class VRCAvatarEditorGUI : EditorWindow
     {
@@ -35,9 +36,9 @@ namespace VRCAvatarEditor
         private bool newSDKUI;
         private bool needRepaint = false;
 
-        private VRC_AvatarDescriptor targetAvatarDescriptor;
-        private VRCAvatarEditor.Avatar edittingAvatar = null;
-        private VRCAvatarEditor.Avatar originalAvatar = null;
+        private VRCAvatarDescriptor targetAvatarDescriptor;
+        private Avatar edittingAvatar = null;
+        private Avatar originalAvatar = null;
 
         private string editorFolderPath;
 
@@ -147,7 +148,7 @@ namespace VRCAvatarEditor
                 var selectionTransform = Selection.gameObjects.Single().transform;
                 while (selectionTransform != null)
                 {
-                    targetAvatarDescriptor = selectionTransform.GetComponent<VRC_AvatarDescriptor>();
+                    targetAvatarDescriptor = selectionTransform.GetComponent<VRCAvatarDescriptor>();
                     if (targetAvatarDescriptor != null)
                     {
                         OnChangedAvatar();
@@ -224,9 +225,9 @@ namespace VRCAvatarEditor
                         targetAvatarDescriptor = EditorGUILayout.ObjectField(
                             LocalizeText.instance.langPair.avatarLabel,
                             targetAvatarDescriptor,
-                            typeof(VRC_AvatarDescriptor),
+                            typeof(VRCAvatarDescriptor),
                             allowSceneObjects: true
-                        ) as VRC_AvatarDescriptor;
+                        ) as VRCAvatarDescriptor;
 
                         if (check.changed)
                         {

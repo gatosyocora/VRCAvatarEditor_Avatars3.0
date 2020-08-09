@@ -2,19 +2,20 @@
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using VRCSDK2;
+using VRC.SDK3.Avatars.Components;
+using Avatar = VRCAvatarEditor.Avatars3.Avatar;
 
-namespace VRCAvatarEditor
+namespace VRCAvatarEditor.Avatars3
 {
     public class AvatarInfoGUI : Editor, IVRCAvatarEditorGUI
     {
-        private VRCAvatarEditor.Avatar avatar;
+        private Avatar avatar;
 
         private bool isOpeningLipSync = false;
         private Vector2 lipSyncScrollPos = Vector2.zero;
         private const int LIPSYNC_SHYPEKEY_NUM = 15;
 
-        public void Initialize(ref VRCAvatarEditor.Avatar avatar)
+        public void Initialize(ref Avatar avatar)
         {
             this.avatar = avatar;
         }
@@ -30,7 +31,7 @@ namespace VRCAvatarEditor
                     // 性別
                     using (var check = new EditorGUI.ChangeCheckScope())
                     {
-                        avatar.sex = (VRC_AvatarDescriptor.AnimationSet)EditorGUILayout.EnumPopup(LocalizeText.instance.langPair.genderLabel, avatar.sex);
+                        avatar.sex = (VRCAvatarDescriptor.AnimationSet)EditorGUILayout.EnumPopup(LocalizeText.instance.langPair.genderLabel, avatar.sex);
 
                         if (check.changed)
                         {
@@ -63,9 +64,10 @@ namespace VRCAvatarEditor
 
                         if (check.changed)
                         {
-                            avatar.descriptor.CustomStandingAnims = avatar.standingAnimController;
-                            avatar.descriptor.CustomSittingAnims = avatar.sittingAnimController;
-                            EditorUtility.SetDirty(avatar.descriptor);
+                            // TODO: Avatars3.0に対応させる
+                            //avatar.descriptor.CustomStandingAnims = avatar.standingAnimController;
+                            //avatar.descriptor.CustomSittingAnims = avatar.sittingAnimController;
+                            //EditorUtility.SetDirty(avatar.descriptor);
 
                             avatar.SetAnimSavedFolderPath();
                         }
@@ -131,11 +133,11 @@ namespace VRCAvatarEditor
                     // リップシンク
                     using (var check = new EditorGUI.ChangeCheckScope())
                     {
-                        avatar.lipSyncStyle = (VRC_AvatarDescriptor.LipSyncStyle)EditorGUILayout.EnumPopup(LocalizeText.instance.langPair.lipSyncTypeLabel, avatar.lipSyncStyle);
+                        avatar.lipSyncStyle = (VRCAvatarDescriptor.LipSyncStyle)EditorGUILayout.EnumPopup(LocalizeText.instance.langPair.lipSyncTypeLabel, avatar.lipSyncStyle);
 
                         if (check.changed) avatar.descriptor.lipSync = avatar.lipSyncStyle;
                     }
-                    if (avatar.lipSyncStyle == VRC_AvatarDescriptor.LipSyncStyle.VisemeBlendShape)
+                    if (avatar.lipSyncStyle == VRCAvatarDescriptor.LipSyncStyle.VisemeBlendShape)
                     {
                         if (avatar.faceMesh != null)
                         {
@@ -149,13 +151,13 @@ namespace VRCAvatarEditor
 
                                     for (int visemeIndex = 0; visemeIndex < LIPSYNC_SHYPEKEY_NUM; visemeIndex++)
                                     {
-                                        EditorGUILayout.LabelField("Viseme:" + Enum.GetName(typeof(VRC_AvatarDescriptor.Viseme), visemeIndex), avatar.descriptor.VisemeBlendShapes[visemeIndex]);
+                                        EditorGUILayout.LabelField("Viseme:" + Enum.GetName(typeof(VRCAvatarDescriptor.Viseme), visemeIndex), avatar.descriptor.VisemeBlendShapes[visemeIndex]);
                                     }
                                 }
                             }
                         }
                     }
-                    if (avatar.lipSyncStyle != VRC_AvatarDescriptor.LipSyncStyle.VisemeBlendShape || avatar.faceMesh == null)
+                    if (avatar.lipSyncStyle != VRCAvatarDescriptor.LipSyncStyle.VisemeBlendShape || avatar.faceMesh == null)
                     {
                         EditorGUILayout.HelpBox(LocalizeText.instance.langPair.lipSyncWarningMessageText, MessageType.Warning);
                         if (GUILayout.Button(LocalizeText.instance.langPair.lipSyncBlendShapesAutoDetectButtonText))
@@ -177,7 +179,7 @@ namespace VRCAvatarEditor
         public void Dispose() { }
 
         // TODO : モデルによっては前髪あたりまでviewpositionがいってしまう
-        private Vector3 CalcAvatarViewPosition(VRCAvatarEditor.Avatar avatar)
+        private Vector3 CalcAvatarViewPosition(Avatar avatar)
         {
             var viewPos = Vector3.zero;
             var animator = avatar.animator;
@@ -234,7 +236,7 @@ namespace VRCAvatarEditor
             return maxDistance;
         }
 
-        private static Vector3 RevertEyePosToPrefab(VRC_AvatarDescriptor descriptor)
+        private static Vector3 RevertEyePosToPrefab(VRCAvatarDescriptor descriptor)
         {
             PrefabUtility.ReconnectToLastPrefab(descriptor.gameObject);
 

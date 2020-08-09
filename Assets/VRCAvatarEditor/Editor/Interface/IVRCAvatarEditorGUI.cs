@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace VRCAvatarEditor
+namespace VRCAvatarEditor.Avatars3
 {
     public interface IVRCAvatarEditorGUI
     {
