@@ -177,6 +177,8 @@ namespace VRCAvatarEditor.Avatars3
                     }
                     else
                     {
+                        // TODO: AnimationControllerの自動作成
+                        /*
                         string notSettingMessage, createMessage;
                         if (_tab == Tab.Standing)
                         {
@@ -218,7 +220,10 @@ namespace VRCAvatarEditor.Avatars3
                             originalAvatar.LoadAvatarInfo();
                             editAvatar.LoadAvatarInfo();
                         }
+                        */
 
+                        // TODO: SittingをStandingと同じにする
+                        /*
                         if (_tab == Tab.Sitting)
                         {
                             using (new EditorGUI.DisabledGroupScope(editAvatar.fxController == null))
@@ -234,6 +239,7 @@ namespace VRCAvatarEditor.Avatars3
                                 }
                             }
                         }
+                        */
                     }
                 }
 
