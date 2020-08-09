@@ -37,6 +37,8 @@ namespace VRCAvatarEditor.Avatars3
 
         private bool usePreviousAnimationOnHandAnimation;
 
+        private int selectedStateIndex = 0;
+
         public void Initialize(ref Avatar editAvatar, Avatar originalAvatar, string saveFolderPath, EditorWindow window, AnimationsGUI animationsGUI)
         {
             this.editAvatar = editAvatar;
@@ -103,17 +105,22 @@ namespace VRCAvatarEditor.Avatars3
 
                 EditorGUILayout.Space();
 
+                string[] stateNames;
+
+                var stateMachine = editAvatar.fxController.layers[editAvatar.targetFxLayerIndex].stateMachine;
+                stateNames = stateMachine.states.Select((s, i) => $"{i+1}:{s.state.name}").ToArray();
+
                 using (var check = new EditorGUI.ChangeCheckScope())
                 {
-                    selectedHandAnim = (HandPose.HandPoseType)Enum.ToObject(typeof(HandPose.HandPoseType), EditorGUILayout.Popup(
-                        LocalizeText.instance.langPair.animationOverrideLabel,
-                        (int)selectedHandAnim,
-                        Enum.GetNames(typeof(HandPose.HandPoseType)).Select((x, index) => index + ":" + x).ToArray()));
+                    selectedStateIndex = EditorGUILayout.Popup(
+                        "State",
+                        selectedStateIndex,
+                        stateNames);
 
-                    if (check.changed)
-                    {
-                        ChangeSelectionHandAnimation();
-                    }
+                    //if (check.changed)
+                    //{
+                    //    ChangeSelectionHandAnimation();
+                    //}
                 }
 
                 using (new EditorGUI.DisabledGroupScope(selectedHandAnim == HandPose.HandPoseType.NoSelection))

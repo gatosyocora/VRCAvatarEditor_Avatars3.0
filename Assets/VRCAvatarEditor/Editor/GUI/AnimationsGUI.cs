@@ -98,8 +98,8 @@ namespace VRCAvatarEditor.Avatars3
                     //if (!showEmoteAnimations)
                     //{
                     var layerNames = controller.layers.Select(l => l.name).ToArray();
-                    layerIndex = EditorGUILayout.Popup("Layer", layerIndex, layerNames);
-                    var stateMachine = controller.layers[layerIndex].stateMachine;
+                    editAvatar.targetFxLayerIndex = EditorGUILayout.Popup("Layer", editAvatar.targetFxLayerIndex, layerNames);
+                    var stateMachine = controller.layers[editAvatar.targetFxLayerIndex].stateMachine;
                     pathMissing = new bool[stateMachine.states.Length];
 
                     if (!stateMachine.states.Any())

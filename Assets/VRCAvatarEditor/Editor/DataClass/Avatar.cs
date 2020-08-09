@@ -19,6 +19,7 @@ namespace VRCAvatarEditor.Avatars3
         public AnimatorController fxController { get; set; }
 
         public CustomAnimLayer fxLayer { get; set; }
+        public int targetFxLayerIndex { get; set; }
         public VRCAvatarDescriptor.AnimationSet sex { get; set; }
         public string avatarId { get; set; }
         public int overridesNum { get; set; }
@@ -44,6 +45,7 @@ namespace VRCAvatarEditor.Avatars3
             descriptor = null;
             eyePos = Vector3.zero;
             fxController = null;
+            targetFxLayerIndex = 0;
             sex = VRCAvatarDescriptor.AnimationSet.None;
             avatarId = string.Empty;
             overridesNum = 0;
@@ -87,6 +89,22 @@ namespace VRCAvatarEditor.Avatars3
                             .FirstOrDefault();
 
             fxController = fxLayer.animatorController as AnimatorController;
+
+            if (fxController != null)
+            {
+                var layerNames = fxController.layers.Select(l => l.name).ToArray();
+                targetFxLayerIndex = Array.IndexOf(layerNames, "Left Hand");
+
+                if (targetFxLayerIndex == -1)
+                {
+                    targetFxLayerIndex = Array.IndexOf(layerNames, "Right Hand");
+
+                    if (targetFxLayerIndex == -1)
+                    {
+                        targetFxLayerIndex = 0;
+                    }
+                }
+            }
 
             SetAnimSavedFolderPath();
 
