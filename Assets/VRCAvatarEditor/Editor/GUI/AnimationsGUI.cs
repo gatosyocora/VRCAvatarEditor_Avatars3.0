@@ -18,7 +18,7 @@ namespace VRCAvatarEditor.Avatars3
         public static readonly string[] HANDANIMS = { "FIST", "FINGERPOINT", "ROCKNROLL", "HANDOPEN", "THUMBSUP", "VICTORY", "HANDGUN" };
         public static readonly string[] EMOTEANIMS = { "EMOTE1", "EMOTE2", "EMOTE3", "EMOTE4", "EMOTE5", "EMOTE6", "EMOTE7", "EMOTE8" };
 
-        private bool[] pathMissing = new bool[7];
+        private bool[] pathMissing;
 
         private GUIStyle normalStyle = new GUIStyle();
         private GUIStyle errorStyle = new GUIStyle();
@@ -38,6 +38,8 @@ namespace VRCAvatarEditor.Avatars3
         }
 
         private string saveFolderPath;
+
+        private int layerIndex = 0;
 
         public void Initialize(ref Avatar editAvatar,
                                Avatar originalAvatar,
@@ -95,45 +97,46 @@ namespace VRCAvatarEditor.Avatars3
                 {
                     //if (!showEmoteAnimations)
                     //{
-                        AnimationClip anim;
-                    //TODO: Animation一覧
-                        //for (int i = 0; i < HANDANIMS.Length; i++)
-                        //{
-                        //    var handPoseName = HANDANIMS[i];
-                        //    if (handPoseName == controller[handPoseName].name)
-                        //        anim = null;
-                        //    else
-                        //        anim = controller[handPoseName];
+                    var layerNames = controller.layers.Select(l => l.name).ToArray();
+                    layerIndex = EditorGUILayout.Popup("Layer", layerIndex, layerNames);
+                    var stateMachine = controller.layers[layerIndex].stateMachine;
+                    pathMissing = new bool[stateMachine.states.Length];
 
-                        //    using (new EditorGUILayout.HorizontalScope(GUILayout.Width(350)))
-                        //    {
-                        //        GUILayout.Label((i + 1) + ":" + handPoseName, (pathMissing[i]) ? errorStyle : normalStyle, GUILayout.Width(100));
+                    AnimationClip anim;
+                    for (int i = 0; i < stateMachine.states.Length; i++)
+                    {
+                        var stateName = stateMachine.states[i].state.name;
+                        anim = stateMachine.states[i].state.motion as AnimationClip;
 
-                        //        controller[handPoseName] = EditorGUILayout.ObjectField(
-                        //            string.Empty,
-                        //            anim,
-                        //            typeof(AnimationClip),
-                        //            true,
-                        //            GUILayout.Width(200)
-                        //        ) as AnimationClip;
+                        using (new EditorGUILayout.HorizontalScope(GUILayout.Width(350)))
+                        {
+                            GUILayout.Label((i + 1) + ":" + stateName, (pathMissing[i]) ? errorStyle : normalStyle, GUILayout.Width(100));
 
-                        //        using (new EditorGUI.DisabledGroupScope(anim == null))
-                        //        {
-                        //            if (GUILayout.Button(LocalizeText.instance.langPair.edit, GUILayout.Width(50)))
-                        //            {
-                        //                if (vrcAvatarEditorGUI.currentTool != VRCAvatarEditorGUI.ToolFunc.FaceEmotion)
-                        //                {
-                        //                    vrcAvatarEditorGUI.currentTool = VRCAvatarEditorGUI.ToolFunc.FaceEmotion;
-                        //                    vrcAvatarEditorGUI.TabChanged();
-                        //                }
-                        //                FaceEmotion.ApplyAnimationProperties(controller[handPoseName], ref editAvatar);
-                        //                faceEmotionGUI.ChangeSaveAnimationState(controller[handPoseName].name,
-                        //                    (HandPose.HandPoseType)Enum.ToObject(typeof(HandPose.HandPoseType), i + 1),
-                        //                    controller[handPoseName]);
-                        //            }
-                        //        }
-                        //    }
-                        //}
+                            stateMachine.states[i].state.motion = EditorGUILayout.ObjectField(
+                                string.Empty,
+                                anim,
+                                typeof(AnimationClip),
+                                true,
+                                GUILayout.Width(200)
+                            ) as AnimationClip;
+
+                            using (new EditorGUI.DisabledGroupScope(anim == null))
+                            {
+                                if (GUILayout.Button(LocalizeText.instance.langPair.edit, GUILayout.Width(50)))
+                                {
+                                    if (vrcAvatarEditorGUI.currentTool != VRCAvatarEditorGUI.ToolFunc.FaceEmotion)
+                                    {
+                                        vrcAvatarEditorGUI.currentTool = VRCAvatarEditorGUI.ToolFunc.FaceEmotion;
+                                        vrcAvatarEditorGUI.TabChanged();
+                                    }
+                                    FaceEmotion.ApplyAnimationProperties(anim, ref editAvatar);
+                                    faceEmotionGUI.ChangeSaveAnimationState(anim.name,
+                                        HandPose.HandPoseType.NoSelection,
+                                        anim);
+                                }
+                            }
+                        }
+                    }
                     //}
                     // TODO: Emote一覧
                     //else

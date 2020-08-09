@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 using VRC.Core;
 using VRC.SDK3.Avatars.Components;
+using static VRC.SDK3.Avatars.Components.VRCAvatarDescriptor;
 
 namespace VRCAvatarEditor.Avatars3
 {
@@ -15,6 +17,8 @@ namespace VRCAvatarEditor.Avatars3
         public VRCAvatarDescriptor descriptor { get; set; }
         public Vector3 eyePos { get; set; }
         public AnimatorController fxController { get; set; }
+
+        public CustomAnimLayer fxLayer { get; set; }
         public VRCAvatarDescriptor.AnimationSet sex { get; set; }
         public string avatarId { get; set; }
         public int overridesNum { get; set; }
@@ -78,9 +82,11 @@ namespace VRCAvatarEditor.Avatars3
             eyePos = descriptor.ViewPosition;
             sex = descriptor.Animations;
 
-            // TODO: Avatars3.0に対応させる
-            //standingAnimController = descriptor.CustomStandingAnims;
-            //sittingAnimController = descriptor.CustomSittingAnims;
+            fxLayer = descriptor.baseAnimationLayers
+                            .Where(l => l.type == VRCAvatarDescriptor.AnimLayerType.FX)
+                            .FirstOrDefault();
+
+            fxController = fxLayer.animatorController as AnimatorController;
 
             SetAnimSavedFolderPath();
 
