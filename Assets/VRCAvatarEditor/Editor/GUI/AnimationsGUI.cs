@@ -243,7 +243,7 @@ namespace VRCAvatarEditor.Avatars3
                     }
                 }
 
-                if (pathMissing.Any(x => x))
+                if (pathMissing != null && pathMissing.Any(x => x))
                 {
                     var warningMessage = (failedAutoFixMissingPath) ? LocalizeText.instance.langPair.failAutoFixMissingPathMessageText : LocalizeText.instance.langPair.existMissingPathMessageText;
                     EditorGUILayout.HelpBox(warningMessage, MessageType.Warning);
