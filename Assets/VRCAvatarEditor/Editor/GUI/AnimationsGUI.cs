@@ -136,7 +136,7 @@ namespace VRCAvatarEditor.Avatars3
                                     }
                                     FaceEmotion.ApplyAnimationProperties(anim, ref editAvatar);
                                     faceEmotionGUI.ChangeSaveAnimationState(anim.name,
-                                        HandPose.HandPoseType.NoSelection,
+                                        i,
                                         anim);
                                 }
                             }

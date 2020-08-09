@@ -282,11 +282,11 @@ namespace VRCAvatarEditor.Avatars3
 
         public void ChangeSaveAnimationState(
                 string animName = "",
-                HandPose.HandPoseType selectedHandAnim = HandPose.HandPoseType.NoSelection,
+                int selectedStateIndex = 0,
                 AnimationClip handPoseAnim = null)
         {
             this.animName = animName;
-            this.selectedHandAnim = selectedHandAnim;
+            this.selectedStateIndex = selectedStateIndex;
             if (handPoseAnim is null)
                 handPoseAnim = HandPose.GetHandAnimationClip(selectedHandAnim);
             this.handPoseAnim = handPoseAnim;
