@@ -147,7 +147,6 @@ namespace VRCAvatarEditor.Avatars3
                             }
                         }
 
-                        setLeftAndRight = EditorGUILayout.ToggleLeft("Set to Left Hand & Right Hand Layer", setLeftAndRight);
                     }
                     else
                     {
@@ -160,6 +159,8 @@ namespace VRCAvatarEditor.Avatars3
                             parentWindow.TabChanged();
                         }
                     }
+
+                    setLeftAndRight = EditorGUILayout.ToggleLeft("Set to Left Hand & Right Hand Layer", setLeftAndRight);
                 }
                 else
                 {
