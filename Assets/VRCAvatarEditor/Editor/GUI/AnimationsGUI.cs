@@ -18,6 +18,7 @@ namespace VRCAvatarEditor.Avatars3
 
         public static readonly string[] HANDANIMS = { "FIST", "FINGERPOINT", "ROCKNROLL", "HANDOPEN", "THUMBSUP", "VICTORY", "HANDGUN" };
         public static readonly string[] EMOTEANIMS = { "EMOTE1", "EMOTE2", "EMOTE3", "EMOTE4", "EMOTE5", "EMOTE6", "EMOTE7", "EMOTE8" };
+        public static readonly string[] EMOTIONSTATES = { "Idle", "Fist", "Open", "Point", "Peace", "RockNRoll", "Gun", "Thumbs up" };
 
         private bool[] pathMissing;
 
@@ -326,6 +327,9 @@ namespace VRCAvatarEditor.Avatars3
             }
             var createdFxController = InstantiateFxController(saveFolderPath + fileName);
 
+            // まばたき防止機構をつける
+            SetNoBlink(createdFxController);
+
             if (!originalAvatar.descriptor.customizeAnimationLayers)
             {
                 EnableCustomPlayableLayers(originalAvatar);
@@ -349,6 +353,32 @@ namespace VRCAvatarEditor.Avatars3
 
             originalAvatar.LoadAvatarInfo();
             editAvatar.LoadAvatarInfo();
+        }
+
+        private static void SetNoBlink(AnimatorController fxController)
+        {
+            var layers = fxController.layers.Where(l => l.name == "Left Hand" || l.name == "Right Hand");
+            foreach (var layer in layers)
+            {
+                var states = layer.stateMachine.states;
+
+                foreach (var state in states)
+                {
+                    var stateName = state.state.name;
+                    if (!EMOTIONSTATES.Contains(stateName)) continue;
+
+                    var control = state.state.AddStateMachineBehaviour(typeof(VRCAnimatorTrackingControl)) as VRCAnimatorTrackingControl;
+
+                    if (stateName == "Idle")
+                    {
+                        control.trackingEyes = VRC.SDKBase.VRC_AnimatorTrackingControl.TrackingType.Tracking;
+                    }
+                    else
+                    {
+                        control.trackingEyes = VRC.SDKBase.VRC_AnimatorTrackingControl.TrackingType.Animation;
+                    }
+                }
+            }
         }
     }
 }
