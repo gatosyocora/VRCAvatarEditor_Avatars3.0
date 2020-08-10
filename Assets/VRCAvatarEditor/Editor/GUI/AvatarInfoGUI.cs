@@ -50,6 +50,23 @@ namespace VRCAvatarEditor.Avatars3
                     // AnimatorOverrideController
                     using (var check = new EditorGUI.ChangeCheckScope())
                     {
+                        avatar.gestureController = EditorGUILayout.ObjectField(
+                            "Gesture Layer",
+                            avatar.gestureController,
+                            typeof(AnimatorController),
+                            true
+                        ) as AnimatorController;
+
+                        if (check.changed)
+                        {
+                            avatar.descriptor.baseAnimationLayers[2].animatorController = avatar.gestureController;
+                            EditorUtility.SetDirty(avatar.descriptor);
+                        }
+                    }
+
+
+                    using (var check = new EditorGUI.ChangeCheckScope())
+                    {
                         avatar.fxController = EditorGUILayout.ObjectField(
                             "FX Layer",
                             avatar.fxController,

@@ -23,10 +23,16 @@ namespace VRCAvatarEditor.Avatars3
         public Animator animator { get; set; }
         public VRCAvatarDescriptor descriptor { get; set; }
         public Vector3 eyePos { get; set; }
-        public AnimatorController fxController { get; set; }
 
         public CustomAnimLayer fxLayer { get; set; }
         public int targetFxLayerIndex { get; set; }
+        public AnimatorController fxController { get; set; }
+
+        public CustomAnimLayer gestureLayer { get; set; }
+        public int targetGestureLayerIndex { get; set; }
+        public AnimatorController gestureController { get; set; }
+
+
         public VRCAvatarDescriptor.AnimationSet sex { get; set; }
         public string avatarId { get; set; }
         public int overridesNum { get; set; }
@@ -116,6 +122,20 @@ namespace VRCAvatarEditor.Avatars3
                         targetFxLayerIndex = 0;
                     }
                 }
+            }
+
+            gestureLayer = descriptor.baseAnimationLayers
+                            .Where(l => l.type == VRCAvatarDescriptor.AnimLayerType.Gesture)
+                            .FirstOrDefault();
+
+            gestureController = gestureLayer.animatorController as AnimatorController;
+
+            if (fxController != null && gestureController != null && targetFxLayerIndex != -1)
+            {
+                var fxLayerNames = fxController.layers.Select(l => l.name).ToArray();
+
+                var gestureLayerNames = gestureController.layers.Select(l => l.name).ToArray();
+                targetGestureLayerIndex = Array.IndexOf(gestureLayerNames, fxLayerNames[targetFxLayerIndex]);
             }
 
             eyelidsSkinnedMesh = descriptor.customEyeLookSettings.eyelidsSkinnedMesh;

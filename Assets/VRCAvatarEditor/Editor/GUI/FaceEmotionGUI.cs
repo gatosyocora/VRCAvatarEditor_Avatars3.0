@@ -126,7 +126,11 @@ namespace VRCAvatarEditor.Avatars3
                     //}
                 }
 
-                handPoseAnim = EditorGUILayout.ObjectField(LocalizeText.instance.langPair.handPoseAnimClipLabel, handPoseAnim, typeof(AnimationClip), true) as AnimationClip;
+                using (var check = new EditorGUI.ChangeCheckScope())
+                {
+                    handPoseAnim = EditorGUILayout.ObjectField(LocalizeText.instance.langPair.handPoseAnimClipLabel, handPoseAnim, typeof(AnimationClip), true) as AnimationClip;
+                }
+
 
                 GUILayout.Space(20);
 
