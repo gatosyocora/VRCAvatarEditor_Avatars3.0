@@ -13,6 +13,13 @@ namespace VRCAvatarEditor.Avatars3
 {
     public class Avatar
     {
+        public enum EyelidBlendShapes
+        {
+            Blink = 0,
+            LookingUp = 1,
+            LookingDown = 2
+        }
+
         public Animator animator { get; set; }
         public VRCAvatarDescriptor descriptor { get; set; }
         public Vector3 eyePos { get; set; }
@@ -39,6 +46,9 @@ namespace VRCAvatarEditor.Avatars3
 
         public List<FaceEmotion.AnimParam> defaultFaceEmotion { get; set; }
 
+        public string[] eyelidBlendShapeNames;
+        public SkinnedMeshRenderer eyelidsSkinnedMesh;
+
         public Avatar()
         {
             animator = null;
@@ -57,6 +67,8 @@ namespace VRCAvatarEditor.Avatars3
             faceShapeKeyEnum = null;
             skinnedMeshList = null;
             animSavedFolderPath = $"Assets{Path.DirectorySeparatorChar}";
+            eyelidBlendShapeNames = new string[Enum.GetNames(typeof(EyelidBlendShapes)).Length];
+            eyelidsSkinnedMesh = null;
         }
 
         public Avatar(VRCAvatarDescriptor descriptor) : this()
@@ -102,6 +114,36 @@ namespace VRCAvatarEditor.Avatars3
                     if (targetFxLayerIndex == -1)
                     {
                         targetFxLayerIndex = 0;
+                    }
+                }
+            }
+
+            eyelidsSkinnedMesh = descriptor.customEyeLookSettings.eyelidsSkinnedMesh;
+            if (eyelidsSkinnedMesh != null)
+            {
+                var eyelidsFaceMesh = eyelidsSkinnedMesh.sharedMesh;
+
+                if (descriptor.customEyeLookSettings.eyelidType == EyelidType.Blendshapes)
+                {
+                    var blinkBlendShapeIndex = descriptor.customEyeLookSettings
+                                                    .eyelidsBlendshapes[(int)EyelidBlendShapes.Blink];
+                    if (blinkBlendShapeIndex != -1)
+                    {
+                        eyelidBlendShapeNames[(int)EyelidBlendShapes.Blink] = eyelidsFaceMesh.GetBlendShapeName(blinkBlendShapeIndex);
+                    }
+
+                    var lookingUpBlendShapeIndex = descriptor.customEyeLookSettings
+                                                        .eyelidsBlendshapes[(int)EyelidBlendShapes.LookingUp];
+                    if (lookingUpBlendShapeIndex != -1)
+                    {
+                        eyelidBlendShapeNames[(int)EyelidBlendShapes.LookingUp] = eyelidsFaceMesh.GetBlendShapeName(lookingUpBlendShapeIndex);
+                    }
+
+                    var lookingDownBlendShapeIndex = descriptor.customEyeLookSettings
+                                                            .eyelidsBlendshapes[(int)EyelidBlendShapes.LookingDown];
+                    if (lookingDownBlendShapeIndex != -1)
+                    {
+                        eyelidBlendShapeNames[(int)EyelidBlendShapes.LookingDown] = eyelidsFaceMesh.GetBlendShapeName(lookingUpBlendShapeIndex);
                     }
                 }
             }

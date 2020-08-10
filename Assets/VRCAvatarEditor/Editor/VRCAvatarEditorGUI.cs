@@ -542,7 +542,12 @@ namespace VRCAvatarEditor.Avatars3
                     for (int i = 0; i < edittingAvatar.skinnedMeshList.Count; i++)
                     {
                         if (edittingAvatar.lipSyncShapeKeyNames != null && edittingAvatar.lipSyncShapeKeyNames.Count > 0)
-                            edittingAvatar.skinnedMeshList[i].SetExclusionBlendShapesByContains(faceEmotionGUI.blendshapeExclusions.Union(edittingAvatar.lipSyncShapeKeyNames).ToList<string>());
+                        {
+                            var exclusions = faceEmotionGUI.blendshapeExclusions
+                                                .Union(edittingAvatar.lipSyncShapeKeyNames)
+                                                .Union(edittingAvatar.eyelidBlendShapeNames).ToList();
+                            edittingAvatar.skinnedMeshList[i].SetExclusionBlendShapesByContains(exclusions);
+                        }
                     }
                 }
 
