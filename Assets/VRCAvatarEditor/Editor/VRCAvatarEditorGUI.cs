@@ -17,13 +17,13 @@ namespace VRCAvatarEditor.Avatars3
 {
     public class VRCAvatarEditorGUI : EditorWindow
     {
-        private const string TOOL_VERSION = "v0.5.1";
+        private const string TOOL_VERSION = "v0.5.1-avatars3-1";
         private const string TWITTER_ID = "gatosyocora";
         private const string DISCORD_ID = "gatosyocora#9575";
         private const string MANUAL_URL = "https://docs.google.com/document/d/1DU7mP5PTvERqHzZiiCBJ9ep5CilQ1iaXC_3IoiuPEgA/edit?usp=sharing";
         private const string BOOTH_URL = "gatosyocora.booth.pm";
         private const string BOOTH_ITEM_URL = "https://booth.pm/ja/items/1258744";
-        private static readonly string GITHUB_LATEST_RELEASE_API_URL = "https://api.github.com/repos/gatosyocora/VRCAvatarEditor/releases/latest";
+        private static readonly string GITHUB_LATEST_RELEASE_API_URL = "https://api.github.com/repos/gatosyocora/VRCAvatarEditor_Avatars3.0/releases/latest";
 
         private AvatarMonitorGUI avatarMonitorGUI;
         public AnimationsGUI animationsGUI;
@@ -781,7 +781,7 @@ namespace VRCAvatarEditor.Avatars3
             var isLatest = IsLatestVersion(TOOL_VERSION, remoteVersion);
             var message = (isLatest) ? 
                             LocalizeText.instance.langPair.localIsLatestMessageText.Replace("<LocalVersion>", TOOL_VERSION) :
-                            LocalizeText.instance.langPair.localIsLatestMessageText.Replace("<LocalVersion>", TOOL_VERSION).Replace("<RemoteVersion>", remoteVersion);
+                            LocalizeText.instance.langPair.remoteIsLatestMessageText.Replace("<LocalVersion>", TOOL_VERSION).Replace("<RemoteVersion>", remoteVersion);
             var okText = (isLatest) ? 
                             LocalizeText.instance.langPair.ok :
                             LocalizeText.instance.langPair.downloadLatestButtonText;
@@ -830,39 +830,9 @@ namespace VRCAvatarEditor.Avatars3
 
         private static bool IsLatestVersion(string local, string remote)
         {
-            var localVersion = local.Substring(1).Split('.').Select(x => int.Parse(x)).ToArray();
-            var remoteVersion = remote.Substring(1).Split('.').Select(x => int.Parse(x)).ToArray();
-            
-            // サイズを合わせる
-            if (localVersion.Length < remoteVersion.Length)
-            {
-                localVersion = Enumerable.Range(0, remoteVersion.Length)
-                                    .Select(i =>
-                                    {
-                                        if (i < localVersion.Length) return localVersion[i];
-                                        else return 0;
-                                    })
-                                    .ToArray();
-            }
-            else if (localVersion.Length > remoteVersion.Length)
-            {
-                remoteVersion = Enumerable.Range(0, localVersion.Length)
-                                    .Select(i =>
-                                    {
-                                        if (i < remoteVersion.Length) return remoteVersion[i];
-                                        else return 0;
-                                    })
-                                    .ToArray();
-            }
-
-            for (int index = 0; index < localVersion.Length; index++)
-            {
-                var l = localVersion[index];
-                var r = remoteVersion[index];
-                if (l < r) return false;
-                if (l > r) return true;
-            }
-            return true;
+            var localVersion = int.Parse(local.Split('-').Last());
+            var remoteVersion = int.Parse(remote.Split('-').Last());
+            return localVersion >= remoteVersion;
         }
     }
 
