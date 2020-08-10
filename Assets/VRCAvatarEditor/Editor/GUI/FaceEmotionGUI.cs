@@ -139,7 +139,7 @@ namespace VRCAvatarEditor.Avatars3
                         var createdAnimClip = FaceEmotion.CreateBlendShapeAnimationClip(animName, originalAvatar.animSavedFolderPath, ref editAvatar, ref blendshapeExclusions, editAvatar.descriptor.gameObject);
                         //if (selectedHandAnim != HandPose.HandPoseType.NoSelection)
                         //{
-                        HandPose.AddHandPoseAnimationKeysFromOriginClip(createdAnimClip, handPoseAnim);
+                        //HandPose.AddHandPoseAnimationKeysFromOriginClip(createdAnimClip, handPoseAnim);
                         states[selectedStateIndex].state.motion = createdAnimClip;
                         EditorUtility.SetDirty(controller);
 
