@@ -40,6 +40,8 @@ namespace VRCAvatarEditor.Avatars3
 
         private int selectedStateIndex = 0;
 
+        private bool setLeftAndRight = true;
+
         public void Initialize(ref Avatar editAvatar, Avatar originalAvatar, string saveFolderPath, EditorWindow window, AnimationsGUI animationsGUI)
         {
             this.editAvatar = editAvatar;
@@ -144,6 +146,8 @@ namespace VRCAvatarEditor.Avatars3
                                 EditorUtility.SetDirty(editAvatar.gestureController);
                             }
                         }
+
+                        setLeftAndRight = EditorGUILayout.ToggleLeft("Set to Left Hand & Right Hand Layer", setLeftAndRight);
                     }
                     else
                     {
@@ -179,6 +183,43 @@ namespace VRCAvatarEditor.Avatars3
                         //HandPose.AddHandPoseAnimationKeysFromOriginClip(createdAnimClip, handPoseAnim);
                         states[selectedStateIndex].state.motion = createdAnimClip;
                         EditorUtility.SetDirty(controller);
+
+                        // 可能であればもう一方の手も同じAnimationClipを設定する
+                        if (setLeftAndRight)
+                        {
+                            var layerName = editAvatar.fxController.layers[editAvatar.targetFxLayerIndex].name;
+                            string targetLayerName = string.Empty;
+                            if (layerName == "Left Hand")
+                            {
+                                targetLayerName = "Right Hand";
+                            }
+                            else if (layerName == "Right Hand")
+                            {
+                                targetLayerName = "Left Hand";
+                            }
+
+                            if (!string.IsNullOrEmpty(targetLayerName))
+                            {
+                                var targetLayer = editAvatar.fxController.layers
+                                                        .Where(l => l.name == targetLayerName)
+                                                        .SingleOrDefault();
+
+                                if (targetLayer != null)
+                                {
+                                    var targetStateName = states[selectedStateIndex].state.name;
+                                    var targetState = targetLayer.stateMachine.states
+                                                            .Where(s => s.state.name == targetStateName)
+                                                            .SingleOrDefault();
+
+                                    if (targetState.state != null)
+                                    {
+                                        targetState.state.motion = createdAnimClip;
+                                        EditorUtility.SetDirty(controller);
+                                    }
+                                }
+                            }
+                        }
+
 
                         FaceEmotion.ResetToDefaultFaceEmotion(ref editAvatar);
                         //}
