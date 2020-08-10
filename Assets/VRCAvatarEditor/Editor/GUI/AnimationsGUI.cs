@@ -303,7 +303,7 @@ namespace VRCAvatarEditor.Avatars3
                 }
 
                 var fileName = $"Gesture_HandsLayer_{ originalAvatar.animator.gameObject.name}.controller";
-                var createdGestureController = InstantiateFxController(saveFolderPath + fileName);
+                var createdGestureController = InstantiateFxController(Path.Combine(saveFolderPath, fileName));
 
                 originalAvatar.descriptor.baseAnimationLayers[2].isDefault = false;
                 editAvatar.descriptor.baseAnimationLayers[2].isDefault = false;
@@ -325,7 +325,7 @@ namespace VRCAvatarEditor.Avatars3
                 Directory.CreateDirectory(fullFolderPath);
                 AssetDatabase.Refresh();
             }
-            var createdFxController = InstantiateFxController(saveFolderPath + fileName);
+            var createdFxController = InstantiateFxController(Path.Combine(saveFolderPath,fileName));
 
             // まばたき防止機構をつける
             SetNoBlink(createdFxController);
@@ -343,7 +343,7 @@ namespace VRCAvatarEditor.Avatars3
             if (originalAvatar.gestureController is null)
             {
                 fileName = $"Gesture_HandsLayer_{ originalAvatar.animator.gameObject.name}.controller";
-                var createdGestureController = InstantiateFxController(saveFolderPath + fileName);
+                var createdGestureController = InstantiateFxController(Path.Combine(saveFolderPath, fileName));
 
                 originalAvatar.descriptor.baseAnimationLayers[2].isDefault = false;
                 originalAvatar.descriptor.baseAnimationLayers[2].animatorController = createdGestureController;
