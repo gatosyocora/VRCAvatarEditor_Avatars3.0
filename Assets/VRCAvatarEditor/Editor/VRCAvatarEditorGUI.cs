@@ -539,13 +539,14 @@ namespace VRCAvatarEditor.Avatars3
 
                 if (edittingAvatar.skinnedMeshList != null)
                 {
+                    var exclusions = faceEmotionGUI.blendshapeExclusions
+                                        .Union(edittingAvatar.lipSyncShapeKeyNames)
+                                        .Union(edittingAvatar.eyelidBlendShapeNames).ToList();
+
                     for (int i = 0; i < edittingAvatar.skinnedMeshList.Count; i++)
                     {
                         if (edittingAvatar.lipSyncShapeKeyNames != null && edittingAvatar.lipSyncShapeKeyNames.Count > 0)
                         {
-                            var exclusions = faceEmotionGUI.blendshapeExclusions
-                                                .Union(edittingAvatar.lipSyncShapeKeyNames)
-                                                .Union(edittingAvatar.eyelidBlendShapeNames).ToList();
                             edittingAvatar.skinnedMeshList[i].SetExclusionBlendShapesByContains(exclusions);
                         }
                     }
@@ -669,7 +670,11 @@ namespace VRCAvatarEditor.Avatars3
             foreach (var skinnedMesh in edittingAvatar.skinnedMeshList)
             {
                 if (edittingAvatar.lipSyncShapeKeyNames != null && edittingAvatar.lipSyncShapeKeyNames.Count > 0)
-                    skinnedMesh.SetExclusionBlendShapesByContains(faceEmotionGUI.blendshapeExclusions.Union(edittingAvatar.lipSyncShapeKeyNames).ToList<string>());
+                    skinnedMesh.SetExclusionBlendShapesByContains(
+                        faceEmotionGUI.blendshapeExclusions
+                            .Union(edittingAvatar.lipSyncShapeKeyNames)
+                            .Union(edittingAvatar.eyelidBlendShapeNames)
+                            .ToList());
 
                 if (faceEmotionGUI.selectedSortType == FaceEmotionGUI.SortType.AToZ)
                     skinnedMesh.SortBlendShapesToAscending();

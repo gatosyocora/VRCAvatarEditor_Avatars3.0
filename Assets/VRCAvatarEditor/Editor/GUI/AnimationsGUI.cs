@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Animations;
+using UnityEditor.Experimental.TerrainAPI;
 using UnityEngine;
 using VRC.SDK3.Avatars.Components;
 using Avatar = VRCAvatarEditor.Avatars3.Avatar;
@@ -186,6 +187,8 @@ namespace VRCAvatarEditor.Avatars3
                         if (GUILayout.Button(createMessage))
                         {
                             CreatePlayableLayerController(originalAvatar, editAvatar);
+
+                            vrcAvatarEditorGUI.TabChanged();
                         }
                     }
                 }

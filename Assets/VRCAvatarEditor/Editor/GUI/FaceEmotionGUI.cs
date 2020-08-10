@@ -156,6 +156,8 @@ namespace VRCAvatarEditor.Avatars3
                         if (GUILayout.Button("Create Gesture Layer Controller"))
                         {
                             AnimationsGUI.CreateGestureController(originalAvatar, editAvatar);
+
+                            parentWindow.TabChanged();
                         }
                     }
                 }
@@ -166,6 +168,8 @@ namespace VRCAvatarEditor.Avatars3
                     if (GUILayout.Button("Create Fx Layer Controller"))
                     {
                         AnimationsGUI.CreatePlayableLayerController(originalAvatar, editAvatar);
+
+                        parentWindow.TabChanged();
                     }
                 }
 
