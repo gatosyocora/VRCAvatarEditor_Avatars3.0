@@ -135,18 +135,33 @@ namespace VRCAvatarEditor.Avatars3
 
                     if (editAvatar.gestureController != null)
                     {
-                        var handState = editAvatar.gestureController.layers[editAvatar.targetFxLayerIndex].stateMachine.states.Where(cs => cs.state.name == states[selectedStateIndex].state.name).SingleOrDefault();
-                        handPoseAnim = handState.state.motion as AnimationClip;
-                        using (var check = new EditorGUI.ChangeCheckScope())
+                        ChildAnimatorState handState = default;
+                        if (editAvatar.gestureController.layers.Length > editAvatar.targetFxLayerIndex)
                         {
-                            handPoseAnim = EditorGUILayout.ObjectField(LocalizeText.instance.langPair.handPoseAnimClipLabel, handPoseAnim, typeof(AnimationClip), true) as AnimationClip;
-                            if (check.changed)
-                            {
-                                handState.state.motion = handPoseAnim;
-                                EditorUtility.SetDirty(editAvatar.gestureController);
-                            }
+                            handState = editAvatar.gestureController.layers[editAvatar.targetFxLayerIndex]
+                                            .stateMachine.states
+                                            .Where(cs => cs.state.name == states[selectedStateIndex].state.name)
+                                            .SingleOrDefault();
                         }
 
+                        // LayerまたはStateが見つからない時はGestureまわりは利用できない
+                        if (handState.state != null)
+                        {
+                            handPoseAnim = handState.state.motion as AnimationClip;
+                            using (var check = new EditorGUI.ChangeCheckScope())
+                            {
+                                handPoseAnim = EditorGUILayout.ObjectField(LocalizeText.instance.langPair.handPoseAnimClipLabel, handPoseAnim, typeof(AnimationClip), true) as AnimationClip;
+                                if (check.changed)
+                                {
+                                    handState.state.motion = handPoseAnim;
+                                    EditorUtility.SetDirty(editAvatar.gestureController);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            EditorGUILayout.HelpBox("HandPose Animation can't be changed because not found target layer or state.", MessageType.Info);
+                        }
                     }
                     else
                     {
