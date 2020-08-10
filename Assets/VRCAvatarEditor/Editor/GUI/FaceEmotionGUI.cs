@@ -126,9 +126,16 @@ namespace VRCAvatarEditor.Avatars3
                     //}
                 }
 
+                var handState = editAvatar.gestureController.layers[editAvatar.targetFxLayerIndex].stateMachine.states.Where(cs => cs.state.name == states[selectedStateIndex].state.name).SingleOrDefault();
+                handPoseAnim = handState.state.motion as AnimationClip;
                 using (var check = new EditorGUI.ChangeCheckScope())
                 {
                     handPoseAnim = EditorGUILayout.ObjectField(LocalizeText.instance.langPair.handPoseAnimClipLabel, handPoseAnim, typeof(AnimationClip), true) as AnimationClip;
+                    if (check.changed)
+                    {
+                        handState.state.motion = handPoseAnim;
+                        EditorUtility.SetDirty(editAvatar.gestureController);
+                    }
                 }
 
 
