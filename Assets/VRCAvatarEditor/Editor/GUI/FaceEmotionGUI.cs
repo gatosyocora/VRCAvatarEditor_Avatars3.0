@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
 using Avatar = VRCAvatarEditor.Avatars3.Avatar;
 
@@ -106,42 +107,67 @@ namespace VRCAvatarEditor.Avatars3
                 EditorGUILayout.Space();
 
                 string[] stateNames;
+                ChildAnimatorState[] states = null;
 
-                var stateMachine = editAvatar.fxController.layers[editAvatar.targetFxLayerIndex].stateMachine;
-                var states = stateMachine.states.OrderBy(s => s.state.name).ToArray();
-                stateNames = states.Select((s, i) => $"{i + 1}:{s.state.name}").ToArray();
-
-                EditorGUILayout.LabelField("Layer", editAvatar.fxController.layers[editAvatar.targetFxLayerIndex].name);
-
-                using (var check = new EditorGUI.ChangeCheckScope())
+                if (editAvatar.fxController != null)
                 {
-                    selectedStateIndex = EditorGUILayout.Popup(
-                        "State",
-                        selectedStateIndex,
-                        stateNames);
+                    var stateMachine = editAvatar.fxController.layers[editAvatar.targetFxLayerIndex].stateMachine;
+                    states = stateMachine.states.OrderBy(s => s.state.name).ToArray();
+                    stateNames = states.Select((s, i) => $"{i + 1}:{s.state.name}").ToArray();
 
-                    //if (check.changed)
-                    //{
-                    //    ChangeSelectionHandAnimation();
-                    //}
-                }
+                    EditorGUILayout.LabelField("Layer", editAvatar.fxController.layers[editAvatar.targetFxLayerIndex].name);
 
-                var handState = editAvatar.gestureController.layers[editAvatar.targetFxLayerIndex].stateMachine.states.Where(cs => cs.state.name == states[selectedStateIndex].state.name).SingleOrDefault();
-                handPoseAnim = handState.state.motion as AnimationClip;
-                using (var check = new EditorGUI.ChangeCheckScope())
-                {
-                    handPoseAnim = EditorGUILayout.ObjectField(LocalizeText.instance.langPair.handPoseAnimClipLabel, handPoseAnim, typeof(AnimationClip), true) as AnimationClip;
-                    if (check.changed)
+                    using (var check = new EditorGUI.ChangeCheckScope())
                     {
-                        handState.state.motion = handPoseAnim;
-                        EditorUtility.SetDirty(editAvatar.gestureController);
+                        selectedStateIndex = EditorGUILayout.Popup(
+                            "State",
+                            selectedStateIndex,
+                            stateNames);
+
+                        //if (check.changed)
+                        //{
+                        //    ChangeSelectionHandAnimation();
+                        //}
+                    }
+
+
+                    if (editAvatar.gestureController != null)
+                    {
+                        var handState = editAvatar.gestureController.layers[editAvatar.targetFxLayerIndex].stateMachine.states.Where(cs => cs.state.name == states[selectedStateIndex].state.name).SingleOrDefault();
+                        handPoseAnim = handState.state.motion as AnimationClip;
+                        using (var check = new EditorGUI.ChangeCheckScope())
+                        {
+                            handPoseAnim = EditorGUILayout.ObjectField(LocalizeText.instance.langPair.handPoseAnimClipLabel, handPoseAnim, typeof(AnimationClip), true) as AnimationClip;
+                            if (check.changed)
+                            {
+                                handState.state.motion = handPoseAnim;
+                                EditorUtility.SetDirty(editAvatar.gestureController);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        EditorGUILayout.HelpBox("No Gesture Layer Controller", MessageType.Warning);
+
+                        if (GUILayout.Button("Create Gesture Layer Controller"))
+                        {
+                            AnimationsGUI.CreateGestureController(originalAvatar, editAvatar);
+                        }
+                    }
+                }
+                else
+                {
+                    EditorGUILayout.HelpBox("No Fx Layer Controller", MessageType.Error);
+
+                    if (GUILayout.Button("Create Fx Layer Controller"))
+                    {
+                        AnimationsGUI.CreatePlayableLayerController(originalAvatar, editAvatar);
                     }
                 }
 
-
                 GUILayout.Space(20);
 
-                using (new EditorGUI.DisabledGroupScope(false))
+                using (new EditorGUI.DisabledGroupScope(states == null || originalAvatar.fxController == null))
                 {
                     if (GUILayout.Button(LocalizeText.instance.langPair.createAnimFileButtonText))
                     {

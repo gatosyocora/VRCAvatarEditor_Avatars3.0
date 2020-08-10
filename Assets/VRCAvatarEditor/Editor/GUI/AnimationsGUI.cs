@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
+using VRC.SDK3.Avatars.Components;
 using Avatar = VRCAvatarEditor.Avatars3.Avatar;
 
 namespace VRCAvatarEditor.Avatars3
@@ -177,69 +178,14 @@ namespace VRCAvatarEditor.Avatars3
                     }
                     else
                     {
-                        // TODO: AnimationControllerの自動作成
-                        /*
-                        string notSettingMessage, createMessage;
-                        if (_tab == Tab.Standing)
-                        {
-                            notSettingMessage = LocalizeText.instance.langPair.noCustomStandingAnimsMessageText;
-                            createMessage = LocalizeText.instance.langPair.createCustomStandingAnimsButtonText;
-                        }
-                        else
-                        {
-                            notSettingMessage = LocalizeText.instance.langPair.noCustomSittingAnimsMessageText;
-                            createMessage = LocalizeText.instance.langPair.createCustomSittingAnimsButtonText;
-                        }
+                        string notSettingMessage = "No Setting Fx Layer Controller";
+                        string createMessage = "Create Fx Layer Controller";
                         EditorGUILayout.HelpBox(notSettingMessage, MessageType.Warning);
 
                         if (GUILayout.Button(createMessage))
                         {
-                            var fileName = "CO_" + originalAvatar.animator.gameObject.name + ".overrideController";
-                            saveFolderPath = "Assets/" + originalAvatar.animator.gameObject.name + "/";
-                            var fullFolderPath = Path.GetFullPath(saveFolderPath);
-                            if (!Directory.Exists(fullFolderPath))
-                            {
-                                Directory.CreateDirectory(fullFolderPath);
-                                AssetDatabase.Refresh();
-                            }
-                            var createdCustomOverrideController = InstantiateVrcCustomOverideController(saveFolderPath + fileName);
-
-                            if (_tab == Tab.Standing)
-                            {
-                                // TODO: Avatars3.0へ対応させる
-                                //originalAvatar.descriptor.CustomStandingAnims = createdCustomOverrideController;
-                                //editAvatar.descriptor.CustomStandingAnims = createdCustomOverrideController;
-                            }
-                            else
-                            {
-                                // TODO: Avatars3.0へ対応させる
-                                //originalAvatar.descriptor.CustomSittingAnims = createdCustomOverrideController;
-                                //editAvatar.descriptor.CustomSittingAnims = createdCustomOverrideController;
-                            }
-
-                            originalAvatar.LoadAvatarInfo();
-                            editAvatar.LoadAvatarInfo();
+                            CreatePlayableLayerController(originalAvatar, editAvatar);
                         }
-                        */
-
-                        // TODO: SittingをStandingと同じにする
-                        /*
-                        if (_tab == Tab.Sitting)
-                        {
-                            using (new EditorGUI.DisabledGroupScope(editAvatar.fxController == null))
-                            {
-                                if (GUILayout.Button(LocalizeText.instance.langPair.setToSameAsCustomStandingAnimsButtonText))
-                                {
-                                    // TODO: Avatars3.0へ対応させる
-                                    //var customStandingAnimsController = originalAvatar.descriptor.CustomStandingAnims;
-                                    //originalAvatar.descriptor.CustomSittingAnims = customStandingAnimsController;
-                                    //editAvatar.descriptor.CustomSittingAnims = customStandingAnimsController;
-                                    originalAvatar.LoadAvatarInfo();
-                                    editAvatar.LoadAvatarInfo();
-                                }
-                            }
-                        }
-                        */
                     }
                 }
 
@@ -285,9 +231,20 @@ namespace VRCAvatarEditor.Avatars3
 
             newFilePath = AssetDatabase.GenerateUniqueAssetPath(newFilePath);
             AssetDatabase.CopyAsset(path, newFilePath);
-            var overrideController = AssetDatabase.LoadAssetAtPath(newFilePath, typeof(AnimatorOverrideController)) as AnimatorOverrideController;
+            var overrideController = AssetDatabase.LoadAssetAtPath(newFilePath, typeof(AnimatorController)) as AnimatorOverrideController;
 
             return overrideController;
+        }
+
+        private static AnimatorController InstantiateFxController(string newFilePath)
+        {
+            string path = VRCAvatarEditorGUI.GetVRCSDKFilePath("vrc_AvatarV3HandsLayer");
+
+            newFilePath = AssetDatabase.GenerateUniqueAssetPath(newFilePath);
+            AssetDatabase.CopyAsset(path, newFilePath);
+            var controller = AssetDatabase.LoadAssetAtPath(newFilePath, typeof(AnimatorController)) as AnimatorController;
+
+            return controller;
         }
 
         public void UpdateSaveFolderPath(string saveFolderPath)
@@ -317,6 +274,81 @@ namespace VRCAvatarEditor.Avatars3
             if (index == -1) return;
             pathMissing[index] = false;
             failedAutoFixMissingPath = false;
+        }
+
+        private static void EnableCustomPlayableLayers(VRCAvatarEditor.Avatars3.Avatar avatar)
+        {
+            avatar.descriptor.customizeAnimationLayers = true;
+        }
+
+        public static void CreateGestureController(Avatar originalAvatar, Avatar editAvatar)
+        {
+            if (!originalAvatar.descriptor.customizeAnimationLayers)
+            {
+                EnableCustomPlayableLayers(originalAvatar);
+                EnableCustomPlayableLayers(editAvatar);
+            }
+
+            if (originalAvatar.gestureController is null)
+            {
+                string saveFolderPath;
+                if (originalAvatar.fxController != null)
+                {
+                    saveFolderPath = Path.GetDirectoryName(AssetDatabase.GetAssetPath(originalAvatar.fxController));
+                }
+                else
+                {
+                    saveFolderPath = "Assets/" + originalAvatar.animator.gameObject.name + "/";
+                }
+
+                var fileName = $"Gesture_HandsLayer_{ originalAvatar.animator.gameObject.name}.controller";
+                var createdGestureController = InstantiateFxController(saveFolderPath + fileName);
+
+                originalAvatar.descriptor.baseAnimationLayers[2].isDefault = false;
+                editAvatar.descriptor.baseAnimationLayers[2].isDefault = false;
+                originalAvatar.descriptor.baseAnimationLayers[2].animatorController = createdGestureController;
+                editAvatar.descriptor.baseAnimationLayers[2].animatorController = createdGestureController;
+            }
+
+            originalAvatar.LoadAvatarInfo();
+            editAvatar.LoadAvatarInfo();
+        }
+
+        public static void CreatePlayableLayerController(Avatar originalAvatar, Avatar editAvatar)
+        {
+            var fileName = $"Fx_HandsLayer_{ originalAvatar.animator.gameObject.name}.controller";
+            var saveFolderPath = "Assets/" + originalAvatar.animator.gameObject.name + "/";
+            var fullFolderPath = Path.GetFullPath(saveFolderPath);
+            if (!Directory.Exists(fullFolderPath))
+            {
+                Directory.CreateDirectory(fullFolderPath);
+                AssetDatabase.Refresh();
+            }
+            var createdFxController = InstantiateFxController(saveFolderPath + fileName);
+
+            if (!originalAvatar.descriptor.customizeAnimationLayers)
+            {
+                EnableCustomPlayableLayers(originalAvatar);
+                EnableCustomPlayableLayers(editAvatar);
+            }
+            originalAvatar.descriptor.baseAnimationLayers[4].isDefault = false;
+            originalAvatar.descriptor.baseAnimationLayers[4].animatorController = createdFxController;
+            editAvatar.descriptor.baseAnimationLayers[4].isDefault = false;
+            editAvatar.descriptor.baseAnimationLayers[4].animatorController = createdFxController;
+
+            if (originalAvatar.gestureController is null)
+            {
+                fileName = $"Gesture_HandsLayer_{ originalAvatar.animator.gameObject.name}.controller";
+                var createdGestureController = InstantiateFxController(saveFolderPath + fileName);
+
+                originalAvatar.descriptor.baseAnimationLayers[2].isDefault = false;
+                originalAvatar.descriptor.baseAnimationLayers[2].animatorController = createdGestureController;
+                editAvatar.descriptor.baseAnimationLayers[2].isDefault = false;
+                editAvatar.descriptor.baseAnimationLayers[2].animatorController = createdGestureController;
+            }
+
+            originalAvatar.LoadAvatarInfo();
+            editAvatar.LoadAvatarInfo();
         }
     }
 }

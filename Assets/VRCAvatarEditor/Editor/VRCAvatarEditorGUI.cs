@@ -721,22 +721,11 @@ namespace VRCAvatarEditor.Avatars3
         public static string GetVRCSDKFilePath(string fileName)
         {
             // VRCSDKフォルダが移動されている可能性があるため対象ファイルを探す
-            var guids = AssetDatabase.FindAssets(fileName, null);
-            string path = string.Empty;
-            bool couldFindFile = false;
-            foreach (var guid in guids)
-            {
-                path = AssetDatabase.GUIDToAssetPath(guid);
-                if (path.Contains("VRCSDK/"))
-                {
-                    couldFindFile = true;
-                    break;
-                }
-            }
-            if (couldFindFile)
-                return path;
-            else
-                return string.Empty;
+            return AssetDatabase.FindAssets(fileName)
+                        .Select(g => AssetDatabase.GUIDToAssetPath(g))
+                        .Where(p => p.Contains("/VRCSDK/"))
+                        .OrderBy(p => Path.GetFileName(p).Count())
+                        .First();
         }
 
         /// <summary>
