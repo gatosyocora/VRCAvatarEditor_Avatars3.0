@@ -114,7 +114,10 @@ namespace VRCAvatarEditor.Avatars3
                 if (editAvatar.fxController != null)
                 {
                     var stateMachine = editAvatar.fxController.layers[editAvatar.targetFxLayerIndex].stateMachine;
-                    states = stateMachine.states.OrderBy(s => s.state.name).ToArray();
+                    states = stateMachine.states
+                                .Where(s => !(s.state.motion is BlendTree))
+                                .OrderBy(s => s.state.name)
+                                .ToArray();
                     stateNames = states.Select((s, i) => $"{i + 1}:{s.state.name}").ToArray();
                     
                     EditorGUILayout.LabelField("Layer", editAvatar.fxController.layers[editAvatar.targetFxLayerIndex].name);
@@ -148,7 +151,8 @@ namespace VRCAvatarEditor.Avatars3
                         {
                             handState = editAvatar.gestureController.layers[editAvatar.targetFxLayerIndex]
                                             .stateMachine.states
-                                            .Where(cs => cs.state.name == states[selectedStateIndex].state.name)
+                                            .Where(s => !(s.state.motion is BlendTree))
+                                            .OrderBy(s => s.state.name)
                                             .SingleOrDefault();
                         }
 

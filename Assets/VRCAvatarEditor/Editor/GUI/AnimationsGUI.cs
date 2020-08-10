@@ -102,7 +102,11 @@ namespace VRCAvatarEditor.Avatars3
                     //{
                     var layerNames = controller.layers.Select(l => l.name).ToArray();
                     editAvatar.targetFxLayerIndex = EditorGUILayout.Popup("Layer", editAvatar.targetFxLayerIndex, layerNames);
-                    var states = controller.layers[editAvatar.targetFxLayerIndex].stateMachine.states.OrderBy(s => s.state.name).ToArray();
+                    var states = controller.layers[editAvatar.targetFxLayerIndex]
+                                    .stateMachine.states
+                                    .Where(s => !(s.state.motion is BlendTree))
+                                    .OrderBy(s => s.state.name)
+                                    .ToArray();
                     pathMissing = new bool[states.Length];
 
                     if (!states.Any())
