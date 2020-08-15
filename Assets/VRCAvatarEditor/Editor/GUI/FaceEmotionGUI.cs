@@ -152,7 +152,7 @@ namespace VRCAvatarEditor.Avatars3
                             handState = editAvatar.gestureController.layers[editAvatar.targetFxLayerIndex]
                                             .stateMachine.states
                                             .Where(s => !(s.state.motion is BlendTree))
-                                            .OrderBy(s => s.state.name)
+                                            .Where(s => s.state.name == states[selectedStateIndex].state.name)
                                             .SingleOrDefault();
                         }
 
